@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'git@github.com:YOUR_USERNAME/fastapi-ci-cd.git'
+                git branch: 'main', url: 'https://github.com/Dilip-code/fastapi-ci-cd.git', credentialsId: 'GitHub-Token-Your-Username'
             }
         }
 
