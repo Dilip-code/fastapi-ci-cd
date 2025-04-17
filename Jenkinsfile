@@ -1,34 +1,20 @@
 pipeline {
     agent any
-
-    environment {
-        VENV = 'venv'
-        APP_PATH = '/home/openeyesvo/fastapi-ci-cd'
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Clone Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/Dilip-code/fastapi-ci-cd.git', credentialsId: 'c6f2ede9-e7ac-46f3-8253-ca98392cbef0'
+                git credentialsId: 'github-pat', url: 'https://github.com/Dilip-code/fastapi-ci-cd.git'
             }
         }
-
         stage('Install Dependencies') {
             steps {
-                dir("${APP_PATH}") {
-                    sh '''
-                        python3 -m venv ${VENV}
-                        . ${VENV}/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                    '''
-                }
+                sh 'python3 -m venv venv'
+                sh './venv/bin/pip install -r requirements.txt'
             }
         }
-
-        stage('Restart FastAPI App') {
+        stage('Run App') {
             steps {
-                sh 'sudo systemctl restart fastapi-app'
+                sh 'nohup ./venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 &'
             }
         }
     }
